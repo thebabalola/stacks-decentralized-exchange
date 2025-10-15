@@ -7,16 +7,16 @@ export function Navbar() {
   const { userData, connectWallet, disconnectWallet } = useStacks();
 
   return (
-    <nav className="flex w-full items-center justify-between gap-4 p-4 h-16 border-b border-gray-500">
-      <Link href="/" className="text-2xl font-bold">
+    <nav className="flex w-full items-center justify-between gap-4 p-4 h-16 border-b border-gray-500 bg-white">
+      <Link href="/" className="text-2xl font-bold text-black">
         Stacks AMM
       </Link>
 
       <div className="flex items-center gap-8">
-        <Link href="/" className="text-gray-300 hover:text-gray-50">
+        <Link href="/" className="text-gray-600 hover:text-black">
           Swap
         </Link>
-        <Link href="/pools" className="text-gray-300 hover:text-gray-50">
+        <Link href="/pools" className="text-gray-600 hover:text-black">
           Pools
         </Link>
       </div>

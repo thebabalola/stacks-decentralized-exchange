@@ -115,13 +115,13 @@ export default function HomePage() {
   }, [fromToken, toToken, fromAmount, estimateSwapOutput]);
 
   return (
-    <div className="flex flex-col max-w-xl w-full gap-4 p-6 border rounded-md">
+    <div className="flex flex-col max-w-xl w-full gap-4 p-6 border rounded-md bg-white text-black">
       <h1 className="text-xl font-bold">Swap</h1>
 
       <div className="flex flex-col gap-1">
         <span className="font-bold">From</span>
         <select
-          className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black"
+          className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black bg-white"
           value={fromToken}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFromToken(e.target.value)}
         >
@@ -133,16 +133,16 @@ export default function HomePage() {
         </select>
         <input
           type="number"
-          className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black"
+          className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black bg-white placeholder-gray-500"
           placeholder="Amount"
           value={fromAmount}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFromAmount(parseInt(e.target.value))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFromAmount(parseInt(e.target.value) || 0)}
         />
       </div>
       <div className="flex flex-col gap-1">
         <span className="font-bold">To</span>
         <select
-          className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black"
+          className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black bg-white"
           value={toToken}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setToToken(e.target.value)}
         >
