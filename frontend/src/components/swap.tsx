@@ -1,39 +1,21 @@
 "use client";
 
 import { useStacks } from "@/hooks/use-stacks";
-import { getAllPools, Pool } from "@/lib/amm";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Pool } from "@/lib/amm";
+import { useEffect, useMemo, useState } from "react";
 
-export default function HomePage() {
+export interface SwapProps {
+  pools: Pool[];
+}
+
+export function Swap({ pools }: SwapProps) {
   const { handleSwap } = useStacks();
-  const [pools, setPools] = useState<Pool[]>([]);
-  const [fromToken, setFromToken] = useState<string>("");
-  const [toToken, setToToken] = useState<string>("");
+  const [fromToken, setFromToken] = useState<string>(pools[0]["token-0"]);
+  const [toToken, setToToken] = useState<string>(pools[0]["token-1"]);
   const [fromAmount, setFromAmount] = useState<number>(0);
   const [estimatedToAmount, setEstimatedToAmount] = useState<bigint>(BigInt(0));
 
-  // Fetch pools on component mount
-  useEffect(() => {
-    const fetchPools = async () => {
-      try {
-        const allPools = await getAllPools();
-        setPools(allPools);
-      } catch (error) {
-        console.error("Failed to fetch pools:", error);
-      }
-    };
-    fetchPools();
-  }, []);
-
-  // Initialize tokens when pools are available
-  useEffect(() => {
-    if (pools.length > 0 && !fromToken && !toToken) {
-      setFromToken(pools[0]["token-0"]);
-      setToToken(pools[0]["token-1"]);
-    }
-  }, [pools, fromToken, toToken]);
-
-  const uniqueTokens = (pools || []).reduce((acc: string[], pool: Pool) => {
+  const uniqueTokens = pools.reduce((acc, pool) => {
     const token0 = pool["token-0"];
     const token1 = pool["token-1"];
 
@@ -52,7 +34,7 @@ export default function HomePage() {
     const poolsWithFromToken = pools.filter(
       (pool) => pool["token-0"] === fromToken || pool["token-1"] === fromToken
     );
-    const tokensFromPools = poolsWithFromToken.reduce((acc: string[], pool: Pool) => {
+    const tokensFromPools = poolsWithFromToken.reduce((acc, pool) => {
       const token0 = pool["token-0"];
       const token1 = pool["token-1"];
 
@@ -68,9 +50,9 @@ export default function HomePage() {
     }, [] as string[]);
 
     return tokensFromPools;
-  }, [fromToken, pools]);
+  }, [fromToken]);
 
-  const estimateSwapOutput = useCallback(() => {
+  function estimateSwapOutput() {
     const pool = pools.find(
       (p) =>
         (p["token-0"] === fromToken && p["token-1"] === toToken) ||
@@ -108,11 +90,11 @@ export default function HomePage() {
         deltaX - BigInt(Math.ceil(Number(deltaX) * feesFloat));
       setEstimatedToAmount(deltaXMinusFees);
     }
-  }, [fromToken, toToken, fromAmount, pools]);
+  }
 
   useEffect(() => {
     estimateSwapOutput();
-  }, [fromToken, toToken, fromAmount, estimateSwapOutput]);
+  }, [fromToken, toToken, fromAmount]);
 
   return (
     <div className="flex flex-col max-w-xl w-full gap-4 p-6 border rounded-md">
@@ -123,7 +105,7 @@ export default function HomePage() {
         <select
           className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black"
           value={fromToken}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFromToken(e.target.value)}
+          onChange={(e) => setFromToken(e.target.value)}
         >
           {uniqueTokens.map((token) => (
             <option key={token} value={token}>
@@ -136,7 +118,7 @@ export default function HomePage() {
           className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black"
           placeholder="Amount"
           value={fromAmount}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFromAmount(parseInt(e.target.value))}
+          onChange={(e) => setFromAmount(parseInt(e.target.value))}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -144,7 +126,7 @@ export default function HomePage() {
         <select
           className="border-2 border-gray-500 rounded-lg px-4 py-2 text-black"
           value={toToken}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setToToken(e.target.value)}
+          onChange={(e) => setToToken(e.target.value)}
         >
           {toTokensList.map((token) => (
             <option key={token} value={token}>
